@@ -1,6 +1,6 @@
 from typing import Tuple
 from os.path import join
-import gym
+import gymnasium as gym
 import numpy as np
 import torch
 from torch import nn, optim
@@ -169,7 +169,7 @@ class PPO:
 
             self.state = next_state
 
-            self.env.render()
+            # self.env.render()
 
             if delay_ms > 0:
                 sleep(delay_ms / 1000)

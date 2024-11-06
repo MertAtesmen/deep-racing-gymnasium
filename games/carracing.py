@@ -1,7 +1,7 @@
 import torch
 from torch import nn
-import gym
-from gym.spaces import Box
+import gymnasium as gym
+from gymnasium.spaces import Box
 import numpy as np
 from collections import deque
 
@@ -60,8 +60,8 @@ class RacingNet(nn.Module):
 
 
 class CarRacing(gym.Wrapper):
-    def __init__(self, frame_skip=0, frame_stack=4):
-        self.env = gym.make("CarRacing-v0")
+    def __init__(self, frame_skip=0, frame_stack=4, human_render = False):
+        self.env = gym.make("CarRacing-v3", render_mode='human' if human_render else 'rgb_array')
         super().__init__(self.env)
 
         self.frame_skip = frame_skip
@@ -116,7 +116,8 @@ class CarRacing(gym.Wrapper):
         self.n_episodes += 1
         self.total_reward = 0
 
-        first_frame = self.postprocess(self.env.reset())
+        # Diff
+        first_frame = self.postprocess(self.env.reset()[0])
 
         for _ in range(self.frame_stack):
             self.frame_buf.append(first_frame)
@@ -129,7 +130,9 @@ class CarRacing(gym.Wrapper):
 
         total_reward = 0
         for _ in range(self.frame_skip + 1):
-            new_frame, reward, done, info = self.env.step(action)
+            # new_frame, reward, done, info = self.env.step(action)
+            new_frame, reward, terminated, truncated, info = self.env.step(action)
+            done = terminated or truncated
             self.total_reward += reward
             reward = self.shape_reward(reward)
             total_reward += reward

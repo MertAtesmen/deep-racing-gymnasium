@@ -28,7 +28,7 @@ def main():
     cfg = load_config()
     args = parse_args()
 
-    env = CarRacing(frame_skip=0, frame_stack=4,)
+    env = CarRacing(frame_skip=0, frame_stack=4, human_render=True)
     net = RacingNet(env.observation_space.shape, env.action_space.shape)
 
     ppo = PPO(
